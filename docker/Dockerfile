@@ -14,8 +14,12 @@ COPY theme/fonts.css             /app/public/assets/custom_fonts.css
 COPY assets/logos/logo.png       /app/public/assets/custom_logo.png
 COPY assets/favicons/favicon.ico /app/public/favicon.ico
 
-# --- Rails initializer: injects CSS into every page via Redmine hook ---
-COPY docker/hooks/custom_theme.rb /app/config/initializers/99_custom_theme.rb
+# --- Inject CSS links into base layout (before </head>) ---
+# Using sed on the base layout is more reliable than an initializer
+# because it doesn't depend on Rails/OpenProject load order.
+RUN sed -i \
+  's|<%= call_hook :view_layouts_base_html_head %>|<%= call_hook :view_layouts_base_html_head %>\n    <script>document.documentElement.dataset.colorMode=\x27dark\x27;<\/script>\n    <link rel="stylesheet" href="\/assets\/custom_fonts.css">\n    <link rel="stylesheet" href="\/assets\/custom_theme.css">|' \
+  /app/app/views/layouts/base.html.erb
 
 # --- Fix permissions ---
 RUN chown app:app \
@@ -23,6 +27,6 @@ RUN chown app:app \
       /app/public/assets/custom_fonts.css \
       /app/public/assets/custom_logo.png \
       /app/public/favicon.ico \
-      /app/config/initializers/99_custom_theme.rb
+      /app/app/views/layouts/base.html.erb
 
 USER app

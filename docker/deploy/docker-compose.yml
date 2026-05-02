@@ -1,28 +1,71 @@
 # Production deployment using the custom image from ghcr.io.
 # Copy .env.example to .env and fill in the values before running.
 #
+# Architecture (mirrors OpenProject's official multi-service setup):
+#   seeder  → runs db:structure:load (fresh) or db:migrate + db:seed (update), then exits
+#   web     → Puma / Rails, starts after seeder completes
+#   worker  → Good Job background worker
+#   db      → PostgreSQL
+#
 # Usage:
 #   docker compose up -d
 #   docker compose pull && docker compose up -d   # update to latest
 
+x-op-image: &op-image
+  image: ghcr.io/fabiooraziomirto/openproject:${IMAGE_TAG:-latest}
+
+x-op-env: &op-env
+  OPENPROJECT_HOST__NAME: ${OPENPROJECT_HOST__NAME}
+  OPENPROJECT_SECRET__KEY__BASE: ${OPENPROJECT_SECRET__KEY__BASE}
+  DATABASE_URL: postgresql://${DB_USER:-openproject}:${DB_PASSWORD}@db/${DB_NAME:-openproject}
+  OPENPROJECT_RAILS__CACHE__STORE: file_store
+  OPENPROJECT_CACHE__MEMCACHE__SERVER: ""
+  IMAP_ENABLED: "false"
+  RAILS_ENV: production
+  OPENPROJECT_HTTPS: "${OPENPROJECT_HTTPS:-false}"
+  # Puma internal port — always 8080 inside the container.
+  # HOST_PORT in .env controls the external mapping, kept separate.
+  PORT: "8080"
+
+x-op-depends: &op-depends
+  depends_on:
+    db:
+      condition: service_healthy
+    seeder:
+      condition: service_completed_successfully
+
 services:
-  openproject:
-    image: ghcr.io/fabiooraziomirto/openproject:${IMAGE_TAG:-latest}
-    restart: unless-stopped
+  seeder:
+    <<: *op-image
+    command: "./docker/prod/seeder"
+    restart: "no"
     environment:
-      OPENPROJECT_HOST__NAME: ${OPENPROJECT_HOST__NAME}
-      OPENPROJECT_SECRET__KEY__BASE: ${OPENPROJECT_SECRET__KEY__BASE}
-      DATABASE_URL: postgresql://${DB_USER:-openproject}:${DB_PASSWORD}@db/${DB_NAME:-openproject}
-      OPENPROJECT_RAILS__CACHE__STORE: file_store
-      OPENPROJECT_CACHE__MEMCACHE__SERVER: ""
-      IMAP_ENABLED: "false"
+      <<: *op-env
     volumes:
       - opdata:/var/openproject/assets
-    ports:
-      - "${PORT:-8080}:80"
     depends_on:
       db:
         condition: service_healthy
+
+  web:
+    <<: [*op-image, *op-depends]
+    command: "./docker/prod/web"
+    restart: unless-stopped
+    environment:
+      <<: *op-env
+    volumes:
+      - opdata:/var/openproject/assets
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+
+  worker:
+    <<: [*op-image, *op-depends]
+    command: "./docker/prod/worker"
+    restart: unless-stopped
+    environment:
+      <<: *op-env
+    volumes:
+      - opdata:/var/openproject/assets
 
   db:
     image: postgres:17
