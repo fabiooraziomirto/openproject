@@ -1,0 +1,148 @@
+/*
+ * OpenProject Custom Dark Theme
+ * Overrides CSS custom properties defined in:
+ *   frontend/src/global_styles/openproject/_variable_defaults.scss
+ *
+ * Applied via Rails hook injection into base.html.erb <head>.
+ * Persists across OpenProject updates via Docker image rebuild.
+ */
+
+:root {
+  /* ── Typography ──────────────────────────────────────────────── */
+  --body-font-family: "JetBrains Mono", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --body-font-size: 13px;
+  --base-line-height: 1.6;
+
+  /* ── Base colors ──────────────────────────────────────────────── */
+  --body-background: #0D1117;
+  --body-font-color: #E6EDF3;
+  --secondary-color: #6E7681;
+
+  /* ── Grays (used for borders, backgrounds, subtle surfaces) ───── */
+  --gray: #21262D;
+  --gray-light: #161B22;
+  --gray-lighter: #30363D;
+  --light-gray: #484F58;
+
+  /* ── Accent & brand ───────────────────────────────────────────── */
+  --accent-color: #1F6FEB;
+  --accent-color--major1: #1158C7;
+  --accent-color--major2: #0D419D;
+  --accent-color--minor1: #1F3A6E;
+  --accent-color--minor2: #172A4E;
+  --accent-color--dark-mode: #4493f8;
+
+  /* ── Primary button (cyan-green, tech feel) ───────────────────── */
+  --primary-button-color: #00D4AA;
+  --primary-button-color--major1: #00B894;
+  --primary-button-color--minor1: #004D3D;
+  --primary-button-color--minor2: #003329;
+  --primary-button-color--dark-mode: #00D4AA;
+  --font-color-on-primary: #0D1117;
+
+  /* ── Header ───────────────────────────────────────────────────── */
+  --header-bg-color: #161B22;
+  --header-border-bottom-color: #21262D;
+  --header-border-bottom-width: 1px;
+  --header-item-font-color: #C9D1D9;
+  --header-item-font-hover-color: #E6EDF3;
+
+  /* ── Main menu / sidebar ──────────────────────────────────────── */
+  --main-menu-bg-color: #0D1117;
+  --main-menu-bg-selected-background: #1F2937;
+  --main-menu-font-color: #8B949E;
+  --main-menu-selected-font-color: #E6EDF3;
+  --main-menu-border-color: #21262D;
+  --main-menu-hover-border-color: transparent;
+  --main-menu-bg-selected-border: #1F6FEB;
+  --main-menu-resizer-color: #21262D;
+
+  /* ── Buttons ──────────────────────────────────────────────────── */
+  --button--font-color: #C9D1D9;
+  --button--background-color: #21262D;
+  --button--background-hover-color: #30363D;
+  --button--active-border-color: #484F58;
+  --button--primary-background-color: var(--primary-button-color);
+  --button--primary-background-hover-color: var(--primary-button-color--major1);
+  --button--primary-background-active-color: var(--primary-button-color--major1);
+  --button--primary-background-disabled-color: var(--primary-button-color--minor1);
+  --button--primary-border-color: var(--primary-button-color);
+  --button--primary-font-color: var(--font-color-on-primary);
+
+  /* ── Dropdowns ────────────────────────────────────────────────── */
+  --drop-down-hover-bg-color: #161B22;
+  --drop-down-selected-bg-color: #1F2937;
+
+  /* ── Forms & inputs ───────────────────────────────────────────── */
+  --content-form-input-hover-border: 1px solid #484F58;
+  --content-form-error-color: #F85149;
+  --content-form-danger-zone-bg-color: #3D1A1A;
+  --content-form-danger-zone-font-color: #FFA198;
+  --type-form-conf-attribute--background: #161B22;
+
+  /* ── Icons & links ────────────────────────────────────────────── */
+  --content-icon-color: var(--accent-color);
+  --link-text-decoration: none;
+  --list-item-hover--border-color: transparent;
+  --list-item-hover--color: var(--accent-color);
+
+  /* ── Breadcrumb ───────────────────────────────────────────────── */
+  --breadcrumb-font-color: #8B949E;
+
+  /* ── Tables ───────────────────────────────────────────────────── */
+  --generic-table--header-font-size: 0.8125rem;
+
+  /* ── Status & misc ────────────────────────────────────────────── */
+  --status-selector-bg-color: #B45309;
+  --status-selector-border-color: transparent;
+  --warn: #F85149;
+  --enterprise-upsell-color: #E8912D;
+  --enterprise-upsell-text-color: #E8912D;
+
+  /* ── SVG arrow (dark-aware) ────────────────────────────────────── */
+  --select-arrow-bg-color-url: url("data:image/svg+xml;utf8,<svg fill='%238B949E' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+
+  /* ── Visual polish: tighter radius, minimal shadows ───────────── */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+}
+
+/* Force Primer dark mode color scheme */
+html {
+  color-scheme: dark;
+}
+
+/* Primer dark-mode color overrides (mirrors _primer_color_mapping.erb dark block) */
+html[data-color-mode="dark"],
+html {
+  --fgColor-default: #E6EDF3;
+  --fgColor-muted: #8B949E;
+  --fgColor-accent: #4493f8;
+  --fgColor-success: #3FB950;
+  --fgColor-attention: #D29922;
+  --fgColor-danger: #F85149;
+  --bgColor-default: #0D1117;
+  --bgColor-muted: #161B22;
+  --bgColor-accent-muted: #1F3A6E;
+  --bgColor-success-muted: #1A3A2A;
+  --bgColor-attention-muted: #3A2F10;
+  --bgColor-danger-muted: #3D1A1A;
+  --borderColor-default: #30363D;
+  --borderColor-muted: #21262D;
+  --borderColor-accent-emphasis: #1F6FEB;
+  --control-bgColor-rest: #21262D;
+  --control-bgColor-hover: #30363D;
+  --control-bgColor-active: #484F58;
+  --control-bgColor-disabled: #161B22;
+  --control-checked-bgColor-rest: #1F6FEB;
+  --control-checked-bgColor-hover: #1158C7;
+  --button-default-bgColor-rest: #21262D;
+  --button-default-bgColor-hover: #30363D;
+  --button-default-fgColor-rest: #C9D1D9;
+  --button-primary-bgColor-rest: #00D4AA;
+  --button-primary-bgColor-hover: #00B894;
+  --button-primary-fgColor-rest: #0D1117;
+  --overlay-bgColor: #161B22;
+  --overlay-borderColor: #30363D;
+}

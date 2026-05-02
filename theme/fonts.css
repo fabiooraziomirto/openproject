@@ -1,0 +1,7 @@
+/*
+ * Custom font definitions for OpenProject dark theme.
+ * Uses Google Fonts CDN. For air-gapped deployments, replace with
+ * @font-face rules pointing to files in /app/public/assets/fonts/.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
